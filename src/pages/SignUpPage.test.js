@@ -1,7 +1,8 @@
-import SignUpPage from "./SignUpPage.vue";
-import {render, screen} from "@testing-library/vue";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
+import { render, screen } from "@testing-library/vue";
+import axios from "axios";
+import SignUpPage from "./SignUpPage.vue";
 
 describe("Sign Up Page", ()=>{
     describe("Layout", ()=> {
@@ -74,6 +75,38 @@ describe("Sign Up Page", ()=>{
 
             const button = screen.queryByRole("button", { name: "Sign Up"});
             expect(button).toBeEnabled();
+        });
+        it(
+            "sends username, e-mail and password to backend after clicking the button",
+            async () =>
+        {
+            const mockPost = jest.fn();
+            axios.post = mockPost;
+            const username = "GoodUser";
+            const email = "my-email@host.com";
+            const password = "myPassword@123";
+
+            render(SignUpPage);
+            const usernameInput = screen.queryByLabelText("Username");
+            const emailInput = screen.queryByLabelText("E-mail");
+            const passwordInput = screen.queryByLabelText("Password");
+            const repeatPasswordInput = screen.queryByLabelText("Repeat Password");
+            const button = screen.queryByRole("button", { name: "Sign Up"});
+
+            await userEvent.type(usernameInput, username);
+            await userEvent.type(emailInput, email);
+            await userEvent.type(passwordInput, password);
+            await userEvent.type(repeatPasswordInput, password);
+            await userEvent.click(button);
+
+            const firstCall = mockPost.mock.calls[0];
+            const body = firstCall[1]; // data parameter from axios.post.
+
+            expect(body).toEqual({
+                username: username,
+                email: email,
+                password: password
+            });
         });
     });
 })

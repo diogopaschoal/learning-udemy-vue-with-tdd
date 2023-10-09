@@ -1,10 +1,12 @@
 <template>
+<form>
     <h1>Sign Up</h1>
     <label for="username">Username</label>
     <input
         id="username"
         placeholder="username"
         autocomplete="username"
+        v-model="username"
     />
     
     <label for="email">E-mail</label>
@@ -12,6 +14,7 @@
         id="email"
         placeholder="e-mail"
         autocomplete="email"
+        v-model="email"
     />
 
     <label for="password">Password</label>
@@ -30,14 +33,19 @@
         v-model="repeatedPassword"
     />
 
-    <button :disabled="isDisabled">Sign Up</button>
+    <button :disabled="isDisabled" @click.prevent="submit">Sign Up</button>
+</form>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "SignUpPage",
     data() {
         return {
+            username: "",
+            email: "",
             password: "",
             repeatedPassword: ""
         }
@@ -45,6 +53,18 @@ export default {
     computed: {
         isDisabled() {
             return (this.password && this.repeatedPassword) ? this.password !== this.repeatedPassword : true;
+        }
+    },
+    methods: {
+        submit(event) {
+            axios.post(
+                "/api/1.0/users",
+                {
+                    username: this.username,
+                    email: this.email,
+                    password: this.password
+                }
+            );
         }
     }
 }
