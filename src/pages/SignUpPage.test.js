@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom";
-import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/vue";
-import axios from "axios";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+import userEvent from "@testing-library/user-event";
 import SignUpPage from "./SignUpPage.vue";
 
 describe("Sign Up Page", ()=>{
@@ -80,8 +81,15 @@ describe("Sign Up Page", ()=>{
             "sends username, e-mail and password to backend after clicking the button",
             async () =>
         {
-            const mockPost = jest.fn();
-            axios.post = mockPost;
+            let requestBody;
+            const server = setupServer(
+                rest.post("/api/1.0/users", async (req, resp, ctx) => {
+                    requestBody = await req.json();
+                    return resp(ctx.status(200));
+                })
+            );
+            server.listen();
+
             const username = "GoodUser";
             const email = "my-email@host.com";
             const password = "myPassword@123";
@@ -98,11 +106,9 @@ describe("Sign Up Page", ()=>{
             await userEvent.type(passwordInput, password);
             await userEvent.type(repeatPasswordInput, password);
             await userEvent.click(button);
+            await server.close();
 
-            const firstCall = mockPost.mock.calls[0];
-            const body = firstCall[1]; // data parameter from axios.post.
-
-            expect(body).toEqual({
+            expect(requestBody).toEqual({
                 username: username,
                 email: email,
                 password: password

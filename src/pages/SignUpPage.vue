@@ -1,40 +1,20 @@
 <template>
-<form>
-    <h1>Sign Up</h1>
-    <label for="username">Username</label>
-    <input
-        id="username"
-        placeholder="username"
-        autocomplete="username"
-        v-model="username"
-    />
-    
-    <label for="email">E-mail</label>
-    <input
-        id="email"
-        placeholder="e-mail"
-        autocomplete="email"
-        v-model="email"
-    />
+    <form>
+        <h1>Sign Up</h1>
+        <label for="username">Username</label>
+        <input id="username" placeholder="username" autocomplete="username" v-model="username" />
 
-    <label for="password">Password</label>
-    <input
-        id="password"
-        type="password"
-        autocomplete="new-password"
-        v-model="password"
-    />
- 
-    <label for="repeat_password">Repeat Password</label>
-    <input
-        id="repeat_password"
-        type="password"
-        autocomplete="current-password"
-        v-model="repeatedPassword"
-    />
+        <label for="email">E-mail</label>
+        <input id="email" placeholder="e-mail" autocomplete="email" v-model="email" />
 
-    <button :disabled="isDisabled" @click.prevent="submit">Sign Up</button>
-</form>
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="new-password" v-model="password" />
+
+        <label for="repeat_password">Repeat Password</label>
+        <input id="repeat_password" type="password" autocomplete="current-password" v-model="repeatedPassword" />
+
+        <button :disabled="isDisabled" @click.prevent="submit">Sign Up</button>
+    </form>
 </template>
 
 <script>
