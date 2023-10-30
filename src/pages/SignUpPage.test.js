@@ -77,6 +77,7 @@ describe("Sign Up Page", ()=>{
             const button = screen.queryByRole("button", { name: "Sign Up"});
             expect(button).toBeEnabled();
         });
+
         it(
             "sends username, e-mail and password to backend after clicking the button",
             async () =>

@@ -1,20 +1,35 @@
 <template>
-    <form>
-        <h1>Sign Up</h1>
-        <label for="username">Username</label>
-        <input id="username" placeholder="username" autocomplete="username" v-model="username" />
+    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+        <form class="card mt-5">
+            <div class="card-header">
+                <h1 class="text-center">Sign Up</h1>
+            </div>
 
-        <label for="email">E-mail</label>
-        <input id="email" placeholder="e-mail" autocomplete="email" v-model="email" />
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" placeholder="username" autocomplete="username" class="form-control" v-model="username" />
+                </div>
 
-        <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="new-password" v-model="password" />
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input id="email" placeholder="e-mail" autocomplete="email" class="form-control" v-model="email" />
+                </div>
 
-        <label for="repeat_password">Repeat Password</label>
-        <input id="repeat_password" type="password" autocomplete="current-password" v-model="repeatedPassword" />
-
-        <button :disabled="isDisabled" @click.prevent="submit">Sign Up</button>
-    </form>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" type="password" autocomplete="new-password" class="form-control" v-model="password" />
+                </div>
+                <div class="mb-3">
+                    <label for="repeat_password" class="form-label">Repeat Password</label>
+                    <input id="repeat_password" type="password" autocomplete="current-password" class="form-control" v-model="repeatedPassword" />
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary" :disabled="isDisabled" @click.prevent="submit">Sign Up</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script>
@@ -36,7 +51,7 @@ export default {
         }
     },
     methods: {
-        submit(event) {
+        submit() {
             axios.post(
                 "/api/1.0/users",
                 {
