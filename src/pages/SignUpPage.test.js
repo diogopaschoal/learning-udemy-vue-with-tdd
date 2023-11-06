@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/vue";
+import { render, screen, waitFor } from "@testing-library/vue";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import userEvent from "@testing-library/user-event";
@@ -63,16 +63,38 @@ describe("Sign Up Page", ()=>{
         });
     });
     describe("Interactions", ()=> {
+        let requestBody;
+        let counter = 0;
+
+        const server = setupServer(
+            rest.post("/api/1.0/users", async (_, resp, ctx) => {
+                requestBody = await req.json();
+                counter += 1;
+                return resp(ctx.status(200));
+            })
+        );
+
+        beforeAll(() => server.listen());
+        beforeEach(() => {
+            counter = 0;
+            requestBody = undefined;
+            server.resetHandlers();
+        });
+        afterAll(() => server.close());
+
+
         const username = "GoodUser";
         const email = "my-email@host.com";
         const password = "myPassword@123";
 
+        let button;
         const setup = async() => {
             render(SignUpPage);
             const usernameInput = screen.queryByLabelText("Username");
             const emailInput = screen.queryByLabelText("E-mail");
             const passwordInput = screen.queryByLabelText("Password");
             const repeatPasswordInput = screen.queryByLabelText("Repeat Password");
+            button = screen.queryByRole("button", { name: "Sign Up"});
 
             await userEvent.type(usernameInput, username);
             await userEvent.type(emailInput, email);
@@ -86,7 +108,6 @@ describe("Sign Up Page", ()=>{
         {
             await setup();
 
-            const button = screen.queryByRole("button", { name: "Sign Up"});
             expect(button).toBeEnabled();
         });
 
@@ -94,20 +115,10 @@ describe("Sign Up Page", ()=>{
             "sends username, e-mail and password to backend after clicking the button",
             async () =>
         {
-            let requestBody;
-            const server = setupServer(
-                rest.post("/api/1.0/users", async (req, resp, ctx) => {
-                    requestBody = await req.json();
-                    return resp(ctx.status(200));
-                })
-            );
-            server.listen();
-
             await setup();
-            const button = screen.queryByRole("button", { name: "Sign Up"});
 
             await userEvent.click(button);
-            server.close();
+            await screen.findByText("Please, check your e-mail to activate your account.");
 
             expect(requestBody).toEqual({
                 username: username,
@@ -120,39 +131,21 @@ describe("Sign Up Page", ()=>{
             "does not allow clicking to the button when there is an ongoing api call",
             async () =>
         {
-            let counter = 0;
-            const server = setupServer(
-                rest.post("/api/1.0/users", async (req, resp, ctx) => {
-                    counter += 1;
-                    return resp(ctx.status(200));
-                })
-            );
-            server.listen();
             await setup();
-            const button = screen.queryByRole("button", { name: "Sign Up"});
 
             await userEvent.click(button);
             await userEvent.click(button);
-            server.close();
+            await screen.findByText("Please, check your e-mail to activate your account.");
 
             expect(counter).toBe(1);
         });
 
         it("displays spinner while API request is in progress", async () => {
-            const server = setupServer(
-                rest.post("/api/1.0/users", async (req, resp, ctx) => {
-                     return resp(ctx.status(200));
-                })
-            );
-            server.listen();
             await setup();
-            const button = screen.queryByRole("button", { name: "Sign Up"});
 
             await userEvent.click(button);
-
             const spinner = screen.queryByRole("status");
 
-            server.close();
             expect(spinner).toBeInTheDocument();
         });
 
@@ -160,6 +153,69 @@ describe("Sign Up Page", ()=>{
             await setup();
             const spinner = screen.queryByRole("status");
             expect(spinner).not.toBeInTheDocument();
+        });
+
+        it("displays account activation information after successful sign up request", async () => {
+            await setup();
+
+            await userEvent.click(button);
+            const text = await screen.findByText("Please, check your e-mail to activate your account.");
+
+            expect(text).toBeInTheDocument();
+        });
+
+        it("doesn't display account activation message before sign up request", async () => {  
+            await setup();
+            const text = screen.queryByText("Please, check your e-mail to activate your account.");
+            expect(text).not.toBeInTheDocument();
+        });
+
+        it("doesn't display account activation information after failing sign up request", async () => {
+            server.use(
+                rest.post("/api/1.0/users", async (_, resp, ctx) => {
+                     return resp(ctx.status(400));
+                })
+            );
+            await setup();
+
+            await userEvent.click(button);
+
+            const text = screen.queryByText("Please, check your e-mail to activate your account.");
+
+            expect(text).not.toBeInTheDocument();
+        });
+
+        it("hides sign up form after successful sign up request", async () => {
+            await setup();
+            const form = screen.queryByTestId("form-sign-up");
+
+            await userEvent.click(button);
+
+            await waitFor(() => {
+                expect(form).not.toBeInTheDocument();
+            }); 
+        });
+
+        it("display validation message for username", async () => {
+            server.use(
+                rest.post("/api/1.0/users", async (_, resp, ctx) => {
+                     return resp(
+                        ctx.status(400),
+                        ctx.json({
+                            validationErrors: {
+                                username: "Username cannot be null"
+                            }
+                        })
+                    );
+                })
+            );
+            await setup();
+
+            await userEvent.click(button);
+
+            const text = await screen.findByText("Username cannot be null");
+
+            expect(text).toBeInTheDocument();
         });
     });
 })
