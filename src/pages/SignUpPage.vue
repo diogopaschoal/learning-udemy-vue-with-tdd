@@ -25,7 +25,7 @@
                 </div>
                 <div class="text-center">
                     <button class="btn btn-primary"
-                        :disabled="isDisabled || disabled"
+                        :disabled="isDisabled || apiProgress"
                         @click.prevent="submit">
                             <span v-if="apiProgress"
                                 class="spinner-border spinner-border-sm"
@@ -55,7 +55,7 @@ export default {
             password: "",
             repeatedPassword: "",
             errors: {}
-        }
+        };
     },
     computed: {
         isDisabled() {
@@ -64,7 +64,6 @@ export default {
     },
     methods: {
         submit() {
-            this.disabled = true;
             this.apiProgress = true;
             axios.post(
                 "/api/1.0/users",
@@ -76,9 +75,10 @@ export default {
             ).then(() => {
                 this.signUpSuccess = true;
             }).catch((error) => {
-                if (error.response.status === 400) {
+                if (error.response.status === 400 && error.response.data.validationErrors ) {
                     this.errors = error.response.data.validationErrors;
                 }
+                this.apiProgress = false;
             });
         }
     }
