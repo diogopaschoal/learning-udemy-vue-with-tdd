@@ -67,10 +67,10 @@ describe("Sign Up Page", ()=>{
         let counter = 0;
 
         const server = setupServer(
-            rest.post("/api/1.0/users", async (_, resp, ctx) => {
+            rest.post("/api/1.0/users", async (req, resp, ctx) => {
                 requestBody = await req.json();
                 counter += 1;
-                return resp(ctx.status(200), ctx.delay(1000));
+                return resp(ctx.status(200), ctx.delay(100));
             })
         );
 
