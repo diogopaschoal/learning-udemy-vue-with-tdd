@@ -6,11 +6,10 @@
             </div>
 
             <div class="card-body">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input id="username" placeholder="username" autocomplete="username" class="form-control" v-model="username" />
-                    <span>{{ errors.username }}</span>
-                </div>
+                <TextInput id="username"
+                    label="Username"
+                    :help="errors.username"
+                    v-model="username"/>
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
                     <input id="email" placeholder="e-mail" autocomplete="email" class="form-control" v-model="email" />
@@ -42,9 +41,13 @@
 
 <script>
 import axios from "axios";
+import TextInput from "../components/TextInput.vue";
 
 export default {
     name: "SignUpPage",
+    components: {
+        TextInput
+    },
     data() {
         return {
             disabled: false,
@@ -80,7 +83,7 @@ export default {
                 }
                 this.apiProgress = false;
             });
-        }
+        },
     }
 }
 </script>
