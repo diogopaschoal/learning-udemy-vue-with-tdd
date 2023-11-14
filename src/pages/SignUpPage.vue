@@ -24,10 +24,6 @@
                     :help="hasPasswordMismatch ? 'Password mismatch': ''"
                     v-model="repeatedPassword"
                     type="password"/>
-                <div class="mb-3">
-                    <label for="repeat_password" class="form-label">Repeat Password</label>
-                    <input id="repeat_password" type="password" autocomplete="current-password" class="form-control" v-model="repeatedPassword" />
-                </div>
                 <div class="text-center">
                     <button class="btn btn-primary"
                         :disabled="isDisabled || apiProgress"
@@ -94,6 +90,17 @@ export default {
                 this.apiProgress = false;
             });
         },
-    }
+    },
+    watch: {
+        username() {
+            delete this.errors.username;
+        },
+        email() {
+            delete this.errors.email;
+        },
+        password() {
+            delete this.errors.password;
+        }
+    },
 }
 </script>

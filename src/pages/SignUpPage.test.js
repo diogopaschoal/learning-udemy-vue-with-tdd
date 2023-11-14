@@ -78,10 +78,10 @@ describe("Sign Up Page", ()=>{
         const email = "my-email@host.com";
         const password = "myPassword@123";
 
-        let button, passwordInput, repeatPasswordInput;
+        let button, usernameInput, passwordInput, repeatPasswordInput;
         const setup = async() => {
             render(SignUpPage);
-            const usernameInput = screen.queryByLabelText("Username");
+            usernameInput = screen.queryByLabelText("Username");
             const emailInput = screen.queryByLabelText("E-mail");
             passwordInput = screen.queryByLabelText("Password");
             repeatPasswordInput = screen.queryByLabelText("Repeat Password");
@@ -234,6 +234,25 @@ describe("Sign Up Page", ()=>{
             const text = await screen.findByText("Password mismatch");
 
             expect(text).toBeInTheDocument();
+        });
+
+        it.each`
+            field               | message                       | label
+            ${"username"}       | ${"Username cannot be null"}  | ${"Username"}
+            ${"email"}          | ${"E-mail cannot be null"}    | ${"E-mail"}
+            ${"password"}       | ${"Password cannot be null"}  | ${"Password"}
+        `(
+            "clear validation error after $field field is updated.",
+            async ({field, message, label}) =>
+        {
+            server.use(generateValidationError(field, message));
+            await userEvent.click(button);
+
+            const text = await screen.findByText(message);
+            const input = await screen.findByLabelText(label);
+            await userEvent.type(input, "updated");
+            
+            expect(text).not.toBeInTheDocument();
         });
     });
 })
