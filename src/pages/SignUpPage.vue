@@ -10,14 +10,20 @@
                     label="Username"
                     :help="errors.username"
                     v-model="username"/>
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mail</label>
-                    <input id="email" placeholder="e-mail" autocomplete="email" class="form-control" v-model="email" />
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input id="password" type="password" autocomplete="new-password" class="form-control" v-model="password" />
-                </div>
+                <TextInput id="email"
+                    label="E-mail"
+                    :help="errors.email"
+                    v-model="email"/>
+                <TextInput id="password"
+                    label="Password"
+                    :help="errors.password"
+                    v-model="password"
+                    type="password"/>
+                <TextInput id="repeat_password"
+                    label="Repeat Password"
+                    :help="hasPasswordMismatch ? 'Password mismatch': ''"
+                    v-model="repeatedPassword"
+                    type="password"/>
                 <div class="mb-3">
                     <label for="repeat_password" class="form-label">Repeat Password</label>
                     <input id="repeat_password" type="password" autocomplete="current-password" class="form-control" v-model="repeatedPassword" />
@@ -63,6 +69,10 @@ export default {
     computed: {
         isDisabled() {
             return (this.password && this.repeatedPassword) ? this.password !== this.repeatedPassword : true;
+        },
+
+        hasPasswordMismatch() {
+            return this.password !== this.repeatedPassword;
         }
     },
     methods: {

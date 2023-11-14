@@ -5,6 +5,7 @@
         class="form-control"
         :class="{'is-invalid': help}"
         :value="modelValue"
+        :type="type"
         @input="$emit('update:modelValue', $event.target.value)"/>
     <span :class="{'invalid-feedback': help}">{{ help }}</span>
 </div>
@@ -18,6 +19,7 @@ export default {
         id: String,
         help: String,
         modelValue: String,
+        type: String,
     },
 }
 </script>
