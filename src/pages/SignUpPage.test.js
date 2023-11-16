@@ -4,60 +4,64 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 import userEvent from "@testing-library/user-event";
 import SignUpPage from "./SignUpPage.vue";
+import i18n from "../locales/i18n";
 
 describe("Sign Up Page", ()=>{
     describe("Layout", ()=> {
         
+        const setup = () => {
+            render(SignUpPage, {
+                global: {
+                    plugins: [i18n]
+                }
+            });
+        };
+
+        beforeEach(() => {
+            setup();
+        });
+
         it("has Sign Up header", () =>{
-            render(SignUpPage);
             const header = screen.queryByRole("heading", { name: "Sign Up"});
             expect(header).toBeInTheDocument();
         });
 
         it("has username input", () => {
-            render(SignUpPage);
             const input = screen.queryByLabelText("Username");
             expect(input).toBeInTheDocument();
         });
 
         it("has email input", () => {
-            render(SignUpPage);
             const input = screen.queryByLabelText("E-mail");
             expect(input).toBeInTheDocument();
         });
 
         it("has password input", () => {
-            render(SignUpPage);
             const input = screen.queryByLabelText("Password");
             expect(input).toBeInTheDocument();
         });
 
         it("has type password for password input", () => {
-            render(SignUpPage);
             const input = screen.queryByLabelText("Password");
             expect(input.type).toBe("password");
         });
 
         it("has repeat password input", () => {
-            render(SignUpPage);
             const input = screen.queryByLabelText("Repeat Password");
             expect(input).toBeInTheDocument();
         });
 
         it("has type password for repeat password input", () => {
-            render(SignUpPage);
             const input = screen.queryByLabelText("Repeat Password");
             expect(input.type).toBe("password");
         });
 
         it("has Sign Up button", () =>{
-            render(SignUpPage);
             const button = screen.queryByRole("button", { name: "Sign Up"});
             expect(button).toBeInTheDocument();
         });
 
         it("has Sign Up button", () =>{
-            render(SignUpPage);
             const button = screen.queryByRole("button", { name: "Sign Up"});
             expect(button).toBeDisabled();
         });
@@ -80,7 +84,11 @@ describe("Sign Up Page", ()=>{
 
         let button, usernameInput, passwordInput, repeatPasswordInput;
         const setup = async() => {
-            render(SignUpPage);
+            render(SignUpPage, {
+                global: {
+                    plugins: [i18n]
+                }
+            });
             usernameInput = screen.queryByLabelText("Username");
             const emailInput = screen.queryByLabelText("E-mail");
             passwordInput = screen.queryByLabelText("Password");
