@@ -5,6 +5,8 @@ import { setupServer } from "msw/node";
 import userEvent from "@testing-library/user-event";
 import SignUpPage from "./SignUpPage.vue";
 import i18n from "../locales/i18n";
+import en from "../locales/en.json";
+import ptBR from "../locales/ptBR.json";
 
 describe("Sign Up Page", ()=>{
     describe("Layout", ()=> {
@@ -263,4 +265,51 @@ describe("Sign Up Page", ()=>{
             expect(text).not.toBeInTheDocument();
         });
     });
-})
+    describe("Internationalization", () => {
+        const setup = () => {
+            render(SignUpPage, {
+                global: {
+                    plugins: [i18n]
+                }
+            });
+        };
+
+        beforeEach(() => setup());
+
+        it("initially displays all text in English", async () => {
+            expect(screen.queryByRole("heading", {name: en.signUp})).toBeInTheDocument();
+            expect(screen.queryByRole("button", {name: en.signUp})).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.repeatPassword)).toBeInTheDocument();
+        });
+
+        it("displays all text in Portuguese after selecting that language", async () => {
+            const portuguese = screen.queryByTitle("Portuguese");
+            await userEvent.click(portuguese);
+
+            expect(screen.queryByRole("heading", {name: ptBR.signUp})).toBeInTheDocument();
+            expect(screen.queryByRole("button", {name: ptBR.signUp})).toBeInTheDocument();
+            expect(screen.queryByLabelText(ptBR.username)).toBeInTheDocument();
+            expect(screen.queryByLabelText(ptBR.email)).toBeInTheDocument();
+            expect(screen.queryByLabelText(ptBR.password)).toBeInTheDocument();
+            expect(screen.queryByLabelText(ptBR.repeatPassword)).toBeInTheDocument();
+        });
+
+        it("displays all text in English after page is translated to Porguese", async () => {
+            const portuguese = screen.queryByTitle("Portuguese");
+            await userEvent.click(portuguese);
+
+            const english = screen.queryByTitle("English");
+            await userEvent.click(english);
+
+            expect(screen.queryByRole("heading", {name: en.signUp})).toBeInTheDocument();
+            expect(screen.queryByRole("button", {name: en.signUp})).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.repeatPassword)).toBeInTheDocument();
+        });
+    });
+});

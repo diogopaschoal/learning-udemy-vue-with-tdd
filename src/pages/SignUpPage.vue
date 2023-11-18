@@ -39,6 +39,8 @@
         </form>
         <div class="alert alert-success mt-3" v-else>Please, check your e-mail to activate your account.</div>
     </div>
+    <img class="i18nLanguageSelector" src="https://flagsapi.com/BR/flat/24.png" title="Portuguese" alt="Mudar língua para português do Brasil" @click="$i18n.locale = 'ptBR'">
+    <img class="i18nLanguageSelector" src="https://flagsapi.com/US/flat/24.png" title="English" alt="Change language to United States english" @click="$i18n.locale = 'en'">
 </template>
 
 <script>
@@ -104,3 +106,9 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+    .i18nLanguageSelector {
+        cursor: pointer;
+    }
+</style>
