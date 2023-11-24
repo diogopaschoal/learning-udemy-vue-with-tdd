@@ -14,7 +14,6 @@ export default {
   components: {
     SignUpPage,
     LanguageSelector,
-    LanguageSelector
   }
 }
 </script>

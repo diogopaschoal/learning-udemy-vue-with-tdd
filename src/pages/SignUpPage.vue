@@ -32,8 +32,7 @@ import TextInput from "../components/TextInput.vue";
 export default {
     name: "SignUpPage",
     components: {
-        TextInput,
-        LanguageSelector
+        TextInput
     },
     data() {
         return {
