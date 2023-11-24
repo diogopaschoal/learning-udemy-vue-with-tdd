@@ -290,6 +290,9 @@ describe("Sign Up Page", ()=>{
         };
 
         beforeEach(() => setup());
+        afterEach(() => {
+            i18n.global.locale = "en";
+        });
 
         it("initially displays all text in English", async () => {
             expect(screen.queryByRole("heading", {name: en.signUp})).toBeInTheDocument();
@@ -311,7 +314,7 @@ describe("Sign Up Page", ()=>{
             expect(screen.queryByLabelText(ptBR.repeatPassword)).toBeInTheDocument();
         });
 
-        it("displays all text in English after page is translated to Porguese", async () => {
+        it("displays all text in English after page is translated to Portuguese", async () => {
             await userEvent.click(portugueseLanguage);
             await userEvent.click(englishLanguage);
 
