@@ -11,7 +11,8 @@
                 <TextInput id="password" :label="$t('password')" :help="errors.password" v-model="password"
                     type="password" />
                 <TextInput id="repeat_password" :label="$t('repeatPassword')"
-                    :help="hasPasswordMismatch ? 'Password mismatch' : ''" v-model="repeatedPassword" type="password" />
+                    :help="hasPasswordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatedPassword"
+                    type="password" />
                 <div class="text-center">
                     <button class="btn btn-primary" :disabled="isDisabled || apiProgress" @click.prevent="submit">
                         <span v-if="apiProgress" class="spinner-border spinner-border-sm" role="status">

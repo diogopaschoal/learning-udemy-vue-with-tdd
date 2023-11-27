@@ -3,5 +3,6 @@
     "username": "Nome de Usuário",
     "email": "E-mail",
     "password": "Senha",
-    "repeatPassword": "Repita a Senha"
+    "repeatPassword": "Repita a Senha",
+    "passwordMismatchValidation": "Senha incorreta"
 }
