@@ -65,6 +65,11 @@ export default {
                     username: this.username,
                     email: this.email,
                     password: this.password
+                },
+                {
+                    headers: {
+                        "Accept-Language": this.$i18n.locale,
+                    }
                 }
             ).then(() => {
                 this.signUpSuccess = true;

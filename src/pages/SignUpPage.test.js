@@ -9,6 +9,28 @@ import en from "../locales/en.json";
 import ptBR from "../locales/ptBR.json";
 import LanguageSelector from "../components/LanguageSelector.vue";
 
+let requestBody;
+let counter = 0;
+let acceptLanguageHeader;
+
+const server = setupServer(
+    rest.post("/api/1.0/users", async (req, resp, ctx) => {
+        requestBody = await req.json();
+        counter += 1;
+        acceptLanguageHeader = req.headers.get("Accept-Language");
+        return resp(ctx.status(200), ctx.delay(100));
+    })
+);
+
+beforeAll(() => server.listen());
+beforeEach(async () => {
+    counter = 0;
+    requestBody = undefined;
+    acceptLanguageHeader = undefined;
+    server.resetHandlers();
+});
+afterAll(() => server.close());
+
 describe("Sign Up Page", () => {
     describe("Layout", () => {
 
@@ -70,17 +92,6 @@ describe("Sign Up Page", () => {
         });
     });
     describe("Interactions", () => {
-        let requestBody;
-        let counter = 0;
-
-        const server = setupServer(
-            rest.post("/api/1.0/users", async (req, resp, ctx) => {
-                requestBody = await req.json();
-                counter += 1;
-                return resp(ctx.status(200), ctx.delay(100));
-            })
-        );
-
         const username = "GoodUser";
         const email = "my-email@host.com";
         const password = "myPassword@123";
@@ -117,14 +128,9 @@ describe("Sign Up Page", () => {
             });
         };
 
-        beforeAll(() => server.listen());
         beforeEach(async () => {
-            counter = 0;
-            requestBody = undefined;
-            server.resetHandlers();
             await setup();
         });
-        afterAll(() => server.close());
 
         it(
             "enables the button when the password and repeat password fields have same value",
@@ -263,7 +269,7 @@ describe("Sign Up Page", () => {
             });
     });
     describe("Internationalization", () => {
-        let portugueseLanguage, englishLanguage, password, repeatPassword;
+        let portugueseLanguage, englishLanguage, username, email, password, repeatPassword, button;
         const setup = () => {
             const app = {
                 components: {
@@ -283,8 +289,11 @@ describe("Sign Up Page", () => {
             });
             portugueseLanguage = screen.queryByTitle("Portuguese");
             englishLanguage = screen.queryByTitle("English");
+            username = screen.queryByLabelText(en.username);
+            email = screen.queryByLabelText(en.email);
             password = screen.queryByLabelText(en.password);
             repeatPassword = screen.queryByLabelText(en.repeatPassword);
+            button = screen.queryByRole("button", { name: en.signUp });
         };
 
         beforeEach(() => setup());
@@ -332,6 +341,32 @@ describe("Sign Up Page", () => {
             const validation = screen.queryByText(ptBR.passwordMismatchValidation);
 
             expect(validation).toBeInTheDocument();
+        });
+
+        it("sends accept-language having en to backend for sign up request", async () => {
+            await userEvent.type(username, "user1");
+            await userEvent.type(email, "user1@mail.com");
+            await userEvent.type(password, "P4ssword");
+            await userEvent.type(repeatPassword, "P4ssword");
+            await userEvent.click(button);
+
+            await screen.findByText("Please, check your e-mail to activate your account.");
+
+            expect(acceptLanguageHeader).toBe("en");
+        });
+
+        it("sends accept-language having ptBR after that language is selected", async () => {
+            await userEvent.click(portugueseLanguage);
+            await userEvent.type(username, "user1");
+            await userEvent.type(email, "user1@mail.com");
+            await userEvent.type(password, "P4ssword");
+            await userEvent.type(repeatPassword, "P4ssword");
+
+            await userEvent.click(button);
+
+            await screen.findByText("Please, check your e-mail to activate your account.");
+
+            expect(acceptLanguageHeader).toBe("ptBR");
         });
     });
 });
