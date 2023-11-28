@@ -6,7 +6,7 @@ const i18n = createI18n({
     locale: "en",
     messages: {
         en,
-        ptBR,
+        "pt-BR": ptBR,
     }
 });
 

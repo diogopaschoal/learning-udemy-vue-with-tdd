@@ -142,7 +142,7 @@ describe("Sign Up Page", () => {
             "sends username, e-mail and password to backend after clicking the button",
             async () => {
                 await userEvent.click(button);
-                await screen.findByText("Please, check your e-mail to activate your account.");
+                await screen.findByText(en.accountActivationNotification);
 
                 expect(requestBody).toEqual({
                     username: username,
@@ -156,7 +156,7 @@ describe("Sign Up Page", () => {
             async () => {
                 await userEvent.click(button);
                 await userEvent.click(button);
-                await screen.findByText("Please, check your e-mail to activate your account.");
+                await screen.findByText(en.accountActivationNotification);
 
                 expect(counter).toBe(1);
             });
@@ -175,13 +175,13 @@ describe("Sign Up Page", () => {
 
         it("displays account activation information after successful sign up request", async () => {
             await userEvent.click(button);
-            const text = await screen.findByText("Please, check your e-mail to activate your account.");
+            const text = await screen.findByText(en.accountActivationNotification);
 
             expect(text).toBeInTheDocument();
         });
 
         it("doesn't display account activation message before sign up request", async () => {
-            const text = screen.queryByText("Please, check your e-mail to activate your account.");
+            const text = screen.queryByText(en.accountActivationNotification);
             expect(text).not.toBeInTheDocument();
         });
 
@@ -193,7 +193,7 @@ describe("Sign Up Page", () => {
             );
             await userEvent.click(button);
 
-            const text = screen.queryByText("Please, check your e-mail to activate your account.");
+            const text = screen.queryByText(en.accountActivationNotification);
 
             expect(text).not.toBeInTheDocument();
         });
@@ -350,7 +350,7 @@ describe("Sign Up Page", () => {
             await userEvent.type(repeatPassword, "P4ssword");
             await userEvent.click(button);
 
-            await screen.findByText("Please, check your e-mail to activate your account.");
+            await screen.findByText(en.accountActivationNotification);
 
             expect(acceptLanguageHeader).toBe("en");
         });
@@ -364,9 +364,26 @@ describe("Sign Up Page", () => {
 
             await userEvent.click(button);
 
-            await screen.findByText("Please, check your e-mail to activate your account.");
+            await screen.findByText(ptBR.accountActivationNotification);
 
-            expect(acceptLanguageHeader).toBe("ptBR");
+            expect(acceptLanguageHeader).toBe("pt-BR");
+        });
+
+        it(
+            "displays account activation information in Portuguese after selecting that language",
+            async () => 
+        {
+            await userEvent.click(portugueseLanguage);
+            await userEvent.type(username, "user1");
+            await userEvent.type(email, "user1@mail.com");
+            await userEvent.type(password, "P4ssword");
+            await userEvent.type(repeatPassword, "P4ssword");
+
+            await userEvent.click(button);
+
+            const accountActivation = await screen.findByText(ptBR.accountActivationNotification);
+
+            expect(accountActivation).toBeInTheDocument();
         });
     });
 });

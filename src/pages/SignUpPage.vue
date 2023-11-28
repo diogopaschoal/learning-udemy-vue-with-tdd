@@ -22,7 +22,7 @@
                 </div>
             </div>
         </form>
-        <div class="alert alert-success mt-3" v-else>Please, check your e-mail to activate your account.</div>
+        <div class="alert alert-success mt-3" v-else>{{ $t("accountActivationNotification") }}</div>
     </div>
 </template>
 
