@@ -1,7 +1,12 @@
-import { createApp } from 'vue'
-import App from './App.vue';
-import i18n from './locales/i18n';
+import { createApp } from "vue";
+// import { createPinia } from "pinia";
+    
+import App from "./App.vue";
+// import router from "./router";
 
-createApp(App)
-    .use(i18n)
-    .mount('#app');
+const app = createApp(App);
+
+// app.use(createPinia());
+// app.use(router);
+
+app.mount("#app");

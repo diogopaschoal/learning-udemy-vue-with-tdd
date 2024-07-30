@@ -1,9 +1,0 @@
-{
-    "signUp": "Criar Conta",
-    "username": "Nome de Usuário",
-    "email": "E-mail",
-    "password": "Senha",
-    "repeatPassword": "Repita a Senha",
-    "passwordMismatchValidation": "Senha incorreta",
-    "accountActivationNotification": "Por favor, cheque seu e-mail para ativar sua conta"
-}
